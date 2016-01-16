@@ -43,6 +43,29 @@ volatile uint8_t iX = 0;
 volatile uint8_t iY = 0;
 volatile uint8_t iZ = 0;
 
+volatile uint8_t countTim = 0;
+volatile uint8_t loopsTim = 2; //16 000 000/1024/96/100/16 =>1mm/s (96 halfsteps) ??
+volatile uint8_t timOvf = 0;
+
+uint8_t speedarray[8] = {2, 8, 16, 32, 64, 128, 168, 255}; //lower number == higher velocity
+
+void timerInit(void)
+{
+    TCCR2B |= _BV(CS22) | _BV(CS21) | _BV(CS20); // Set 8 bit timer2 with prescaler 1024
+    TCCR2A |= _BV(WGM21); // set CTC mode
+    OCR2A = 100; // CTC mode aimed value
+    TIMSK2 |= _BV(OCIE2A); // allow interrupt CTC
+}
+
+ISR(TIMER2_COMPA_vect)
+{
+    if (countTim == 255) 
+    {
+        timOvf = 1;
+    }
+    countTim++;    
+}
+
 ISR(USART_RX_vect)
 {
     uint8_t received = usart_getchar();
@@ -111,12 +134,15 @@ void decodeStep(uint8_t step)
     PORTC = steps[iY];
     PORTD = (steps[iZ] << 2);
     
-    _delay_ms(10);
+    //_delay_ms(10);
 }
 
 void decodeCommand(uint8_t command)
 {
-    
+    if ((command & 0b1100000) == 0b1100000) //0b11 reserved for velocity setup
+    {
+        loopsTim = speedarray[command & 0b00000111]; //8 values in array
+    }
 }
 
 int main(void)
@@ -128,6 +154,7 @@ int main(void)
     
   //init the UART -- uart_init() is in uart.c
   usart_init ( MYUBRR );
+  timerInit();
   
   sei();
   while(1)
@@ -137,20 +164,27 @@ int main(void)
         uint8_t step = stepbuf[tail];
         if (!(step & 0b1000000))
         {
-            decodeStep(step);
+            if ((countTim >= loopsTim) || (timOvf == 1))
+            {
+                decodeStep(step);
+                countTim = 0;
+                timOvf = 0;
+                tail++;
+                usart_putchar(step);
+            }
         }
         else
         {
             decodeCommand(step);
+            tail++;
+            usart_putchar(step);
         }
         
-        tail++;
         if (tail >= BUFSIZE)
         {
             tail = 0;
             ovf = 0;
         }
-        usart_putchar(step);
     }
   }
 } 
