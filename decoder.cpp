@@ -1,5 +1,5 @@
 #include "decoder.h"
-#define stepsBufSize 100
+#define stepsBufSize 20
 
 Decoder::Decoder(QObject *parent) : QObject(parent)
 {
@@ -401,7 +401,7 @@ void Decoder::exportData(double X, double Y, double Z)
         if (Zstep < 0) byte |= 0b00100000;
 
         steps.append(byte);
-        qDebug() << byte;
+        //qDebug() << byte;
     }
 }
 
@@ -441,7 +441,8 @@ void Decoder::getBytes()
 
 void Decoder::incrRecCounter(int val)
 {
-    recCounter =+ val;
+    recCounter = recCounter + val;
+    //qDebug() << recCounter;
     getBytes();
 }
 

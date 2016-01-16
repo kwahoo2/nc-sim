@@ -35,7 +35,7 @@ void SerialDriver::sendByte(const quint8 val)
 {
     char str[] = {static_cast<char>(val)};
     serial->write(str, sizeof(str));
-    qDebug() << "Sended " << str;
+    //qDebug() << "Sended " << str;
 }
 
 void SerialDriver::closeSerial()

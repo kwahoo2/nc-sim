@@ -20,6 +20,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_readTextButton_clicked()
 {
+    if (mySerDrv->isOpened()) mySerDrv->closeSerial();
+
     QString plainTextEditContents = ui->plainTextEdit->toPlainText();
     plainTextEditContents = plainTextEditContents.simplified(); //clear qstring from non-necessary whitespaces
     QStringList lines = plainTextEditContents.split("\n");
@@ -33,5 +35,4 @@ void MainWindow::on_readTextButton_clicked()
                      mySerDrv, SLOT(sendByte(quint8)));
     myDecoder->incrRecCounter(0); //initial batch
 
-    //mySerDrv->closeSerial();
 }
