@@ -6,6 +6,9 @@ Decoder::Decoder(QObject *parent) : QObject(parent)
     Xold = 0.0;
     Yold = 0.0;
     Zold = 0.0;
+    reversedX = false,
+    reversedY = false,
+    reversedZ = false;
     byteCounter = 0;
     recCounter = 0;
     useIJ = 1; //important for G02 and G03 commands, driven by G17, G18 and G19
@@ -391,6 +394,10 @@ void Decoder::exportData(double X, double Y, double Z)
         int Ystep = (posValNum.at(posValNum.size() - 2) - posValNum.at(posValNum.size() - 5));
         int Zstep = (posValNum.at(posValNum.size() - 1) - posValNum.at(posValNum.size() - 4));
         //qDebug() << Xstep << " " << Ystep << " " << Zstep;
+
+        if (reversedX) Xstep=-Xstep;
+        if (reversedY) Ystep=-Ystep;
+        if (reversedZ) Zstep=-Zstep;
 
         if (Xstep > 0) byte |= 0b00000001;
         if (Ystep > 0) byte |= 0b00000010;

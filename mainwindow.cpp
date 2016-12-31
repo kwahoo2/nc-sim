@@ -87,3 +87,18 @@ void MainWindow::on_zMButton_pressed()
     //qDebug() << "Z- " << endl;
     for(int i=0; i<10; i++) mySerDrv->sendByte(0b00100000);
 }
+
+void MainWindow::on_reversedXChb_toggled(bool checked)
+{
+    myDecoder->reversedX = checked;
+}
+
+void MainWindow::on_reversedYChb_toggled(bool checked)
+{
+    myDecoder->reversedY = checked;
+}
+
+void MainWindow::on_reversedZChb_toggled(bool checked)
+{
+    myDecoder->reversedZ = checked;
+}

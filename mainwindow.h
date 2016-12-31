@@ -35,6 +35,12 @@ private slots:
 
     void on_zMButton_pressed();
 
+    void on_reversedXChb_toggled(bool checked);
+
+    void on_reversedYChb_toggled(bool checked);
+
+    void on_reversedZChb_toggled(bool checked);
+
 signals:
     void toDecode(const QStringList lines);
 

@@ -16,6 +16,7 @@ class Decoder : public QObject
     Q_OBJECT
 public:
     explicit Decoder(QObject *parent = 0);
+    bool reversedX, reversedY, reversedZ;
 
 signals:
     void sendSingleByte(const quint8 byte);

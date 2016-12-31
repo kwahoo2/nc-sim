@@ -89,7 +89,7 @@ G3 I16.096900000000002 J25.315799999999999 K0 X53 Y54.7502 Z29</string>
          <string>Reverse Y</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>
