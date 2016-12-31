@@ -58,40 +58,48 @@ G3 I16.096900000000002 J25.315799999999999 K0 X53 Y54.7502 Z29</string>
         <property name="text">
          <string>X+</string>
         </property>
+        <property name="autoRepeat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
-      <item row="2" column="1">
+      <item row="3" column="2">
        <widget class="QPushButton" name="zMButton">
         <property name="text">
          <string>Z-</string>
         </property>
+        <property name="autoRepeat">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="3" column="0">
        <widget class="QPushButton" name="zPButton">
         <property name="text">
          <string>Z+</string>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QCheckBox" name="checkBox_2">
-        <property name="text">
-         <string>CheckBox</string>
+        <property name="autoRepeat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="yMButton">
+      <item row="1" column="3">
+       <widget class="QCheckBox" name="reversedYChb">
         <property name="text">
-         <string>Y-</string>
+         <string>Reverse Y</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="0" column="2">
        <widget class="QPushButton" name="xMButton">
         <property name="text">
          <string>X-</string>
+        </property>
+        <property name="autoRepeat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -100,19 +108,32 @@ G3 I16.096900000000002 J25.315799999999999 K0 X53 Y54.7502 Z29</string>
         <property name="text">
          <string>Y+</string>
         </property>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="checkBox">
-        <property name="text">
-         <string>CheckBox</string>
+        <property name="autoRepeat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QCheckBox" name="checkBox_3">
+      <item row="0" column="3">
+       <widget class="QCheckBox" name="reversedXChb">
         <property name="text">
-         <string>CheckBox</string>
+         <string>Reverse X</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="3">
+       <widget class="QCheckBox" name="reversedZChb">
+        <property name="text">
+         <string>Reverse Z</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="yMButton">
+        <property name="text">
+         <string>Y-</string>
+        </property>
+        <property name="autoRepeat">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

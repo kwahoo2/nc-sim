@@ -5,26 +5,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    repeatdelay = 100;
-
     myDecoder = new Decoder(this);
     mySerDrv = new SerialDriver(this);
     QObject::connect(this, SIGNAL(toDecode(QStringList)),
                      myDecoder, SLOT(decodeCommands(const QStringList)));
     ui->setupUi(this);
 
-    ui->xPButton->setAutoRepeat(true);
-    ui->xPButton->setAutoRepeatDelay(repeatdelay);
-    ui->yPButton->setAutoRepeat(true);
-    ui->yPButton->setAutoRepeatDelay(repeatdelay);
-    ui->zPButton->setAutoRepeat(true);
-    ui->zPButton->setAutoRepeatDelay(repeatdelay);
-    ui->xMButton->setAutoRepeat(true);
-    ui->xMButton->setAutoRepeatDelay(repeatdelay);
-    ui->yMButton->setAutoRepeat(true);
-    ui->yMButton->setAutoRepeatDelay(repeatdelay);
-    ui->zMButton->setAutoRepeat(true);
-    ui->zMButton->setAutoRepeatDelay(repeatdelay);
 }
 
 MainWindow::~MainWindow()

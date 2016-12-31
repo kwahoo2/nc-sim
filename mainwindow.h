@@ -39,7 +39,6 @@ signals:
     void toDecode(const QStringList lines);
 
 private:
-    int repeatdelay;
     Ui::MainWindow *ui;
     Decoder *myDecoder;
     SerialDriver *mySerDrv;
