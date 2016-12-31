@@ -8,7 +8,7 @@ Decoder::Decoder(QObject *parent) : QObject(parent)
     Zold = 0.0;
     byteCounter = 0;
     recCounter = 0;
-    useIJ = 1; //important for G02 and G03 commands, driben by G17, G18 and G19
+    useIJ = 1; //important for G02 and G03 commands, driven by G17, G18 and G19
     useIK = 0;
     useJK = 0;
     stepsPerMM = 96;
