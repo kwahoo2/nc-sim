@@ -112,23 +112,27 @@ void Decoder::decodeMovement(const int num,
 
     if ((num == 0) || (num == 1)) //G00 rapid linear move and G01 feed linear move
     {
-        if (num == 0)
-        {
-            rapidMode();
-        }
-        else
-        {
-            feedMode();
-        }
         double X = Xold;
         double Y = Yold;
         double Z = Zold;
+        double F = 0.0;
         for (uint i = 0; i < args.size(); i++)
         {
             QChar c = args.at(i);
             if (c == QLatin1Char('X')) X = vals.at(i);
             if (c == QLatin1Char('Y')) Y = vals.at(i);
             if (c == QLatin1Char('Z')) Z = vals.at(i);
+            if (c == QLatin1Char('F')) F = vals.at(i);
+        }
+        if (num == 0)
+        {
+            if (F!=0.0) rapidSpeed = F;
+            rapidMode();
+        }
+        else
+        {
+            if (F!=0.0) feedSpeed = F;
+            feedMode();
         }
         renderLine(Xold, Yold, Zold, X, Y, Z);
         Xold = X; Yold = Y; Zold = Z;
@@ -141,11 +145,10 @@ void Decoder::decodeMovement(const int num,
         double R = -1.0; //negative radius does not exist, do it can be used as flag
         double I = 0.0;
         double J = 0.0;
+        double F = 0.0;
         //double K = 0.0;
         double CX, CY;
         bool ccw = 0;
-
-        feedMode();
 
         if (num == 03) ccw = 1;
 
@@ -160,7 +163,12 @@ void Decoder::decodeMovement(const int num,
             if (c == QLatin1Char('Y')) Y = vals.at(i);
             if (c == QLatin1Char('Z')) Z = vals.at(i);
             //if (c == QLatin1Char('K')) K = vals.at(i);
+            if (c == QLatin1Char('F')) F = vals.at(i); //feed velocity reading
         }
+
+        if (F!=0.0) feedSpeed = F;
+        feedMode();
+
         if ((useIJ) && (R < 0.0))
         {
             CX = Xold + I;
