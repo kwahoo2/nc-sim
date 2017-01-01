@@ -27,7 +27,7 @@ public slots:
     void incrRecCounter(const int val);
 
 private:
-    void decodeMovement(const QChar cmd, const int num,
+    void decodeMovement(const int num,
                         const std::vector <QChar> args, const std::vector <double> vals);
     double Xold, Yold, Zold;
     int stepsPerMM;
@@ -51,6 +51,7 @@ private:
     void rapidMode();
     void feedMode();
     bool useIJ, useIK, useJK;
+    double invSpeedconst, rapidSpeed, feedSpeed;
 };
 
 #endif // DECODER_H

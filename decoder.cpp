@@ -15,6 +15,9 @@ Decoder::Decoder(QObject *parent) : QObject(parent)
     useIK = 0;
     useJK = 0;
     stepsPerMM = 96;
+    invSpeedconst = 3.2; //magic number used to calculate timers
+    rapidSpeed = 3.2; //mm/s
+    feedSpeed = 0.32;
 
     posValues.setString(&posVals);
 }
@@ -34,7 +37,7 @@ void Decoder::decodeCommands(const QStringList lines)
         {
             if (number != -1)
             {
-                decodeMovement(cmd, number,
+                decodeMovement(number,
                            args, vals);
                 vals.clear();
                 args.clear();
@@ -53,7 +56,7 @@ void Decoder::decodeCommands(const QStringList lines)
             {
                 if (number != -1) //send data from previous run
                 {
-                    decodeMovement(cmd, number,
+                    decodeMovement(number,
                                args, vals);
                 }
 
@@ -88,13 +91,13 @@ void Decoder::decodeCommands(const QStringList lines)
     }
     if (number != -1) //read the last line
     {
-        decodeMovement(cmd, number,
+        decodeMovement(number,
                    args, vals);
     }
     writePosFile(); //write positions (int) to file
     writeStepsFile();
 }
-void Decoder::decodeMovement(const QChar cmd, const int num,
+void Decoder::decodeMovement(const int num,
                     const std::vector <QChar> args, const std::vector <double> vals)
 {
     /*qDebug() << cmd << num;
@@ -141,6 +144,8 @@ void Decoder::decodeMovement(const QChar cmd, const int num,
         //double K = 0.0;
         double CX, CY;
         bool ccw = 0;
+
+        feedMode();
 
         if (num == 03) ccw = 1;
 
@@ -370,12 +375,18 @@ void Decoder::renderCircleXY(double X0, double Y0, double Z0,
 
 void Decoder::rapidMode()
 {
-
+    quint8 byte = 0b11000000;//0b11 reserved for velocity setup
+    int timerVal = round(invSpeedconst / rapidSpeed);
+    byte = byte | static_cast<quint8>(timerVal);
+    steps.append(byte);
 }
 
 void Decoder::feedMode()
 {
-
+    quint8 byte = 0b11000000;//0b11 reserved for velocity setup
+    int timerVal = round(invSpeedconst / feedSpeed);
+    byte = byte | static_cast<quint8>(timerVal);
+    steps.append(byte);
 }
 
 void Decoder::exportData(double X, double Y, double Z)

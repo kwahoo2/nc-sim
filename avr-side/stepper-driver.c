@@ -1,5 +1,3 @@
-// Test fixed-point multiply     
-             
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -44,14 +42,13 @@ volatile uint8_t iY = 0;
 volatile uint8_t iZ = 0;
 
 volatile uint8_t countTim = 0;
-volatile uint8_t loopsTim = 2; //16 000 000/1024/96/100/16 =>1mm/s (96 halfsteps) ??
+volatile uint8_t loopsTim = 16; //16 000 000/128/96/100/16 =>0.8mm/s (96 halfsteps) M6x1
 volatile uint8_t timOvf = 0;
-
-uint8_t speedarray[8] = {2, 8, 16, 32, 64, 128, 168, 255}; //lower number == higher velocity
 
 void timerInit(void)
 {
-    TCCR2B |= _BV(CS22) | _BV(CS21) | _BV(CS20); // Set 8 bit timer2 with prescaler 1024
+    //TCCR2B |= _BV(CS22) | _BV(CS21) | _BV(CS20); // Set 8 bit timer2 with prescaler 1024
+    TCCR2B |= _BV(CS22) | _BV(CS20); // Set 8 bit timer2 with prescaler 128
     TCCR2A |= _BV(WGM21); // set CTC mode
     OCR2A = 100; // CTC mode aimed value
     TIMSK2 |= _BV(OCIE2A); // allow interrupt CTC
@@ -139,9 +136,10 @@ void decodeStep(uint8_t step)
 
 void decodeCommand(uint8_t command)
 {
-    if ((command & 0b1100000) == 0b1100000) //0b11 reserved for velocity setup
+    if ((command & 0b11000000) == 0b11000000) //0b11 reserved for velocity setup
     {
-        loopsTim = speedarray[command & 0b00000111]; //8 values in array
+
+        loopsTim = ((command & 0b00111111) << 2) + 1; //values 1-253, higher is slower
     }
 }
 
@@ -162,7 +160,7 @@ int main(void)
     while ((head > tail && ovf == 0) || (head < tail && ovf == 1))
     {
         uint8_t step = stepbuf[tail];
-        if (!(step & 0b1000000))
+        if (!(step & 0b10000000))
         {
             if ((countTim >= loopsTim) || (timOvf == 1))
             {
