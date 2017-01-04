@@ -45,6 +45,8 @@ volatile uint8_t countTim = 0;
 volatile uint8_t loopsTim = 16; //16 000 000/128/96/100/16 =>0.8mm/s (96 halfsteps) M6x1
 volatile uint8_t timOvf = 0;
 
+volatile uint8_t powerUp = 0b11000000; //if 0b0_ motor enabled, 0b_0 stepper motors power enabled 
+
 void timerInit(void)
 {
     //TCCR2B |= _BV(CS22) | _BV(CS21) | _BV(CS20); // Set 8 bit timer2 with prescaler 1024
@@ -129,7 +131,8 @@ void decodeStep(uint8_t step)
     }
     PORTB = steps[iX];
     PORTC = steps[iY];
-    PORTD = (steps[iZ] << 2);
+    PORTD = (steps[iZ] << 2) | powerUp;
+    //PORTD = (steps[iZ] << 2);
     
     //_delay_ms(10);
 }
@@ -141,6 +144,12 @@ void decodeCommand(uint8_t command)
 
         loopsTim = ((command & 0b00111111) << 2) + 1; //values 1-253, higher is slower
     }
+    
+    if ((command & 0b10100000) == 0b10100000) //reserved for power modes setup
+    {
+
+        powerUp = (command & 0b00000011) << 6; //port 6 and 7
+    }
 }
 
 int main(void)
@@ -148,7 +157,8 @@ int main(void)
     
   DDRB = 0x0F;
   DDRC = 0x0F;
-  DDRD = 0x3C; //PD0 and PD1 are uart
+  DDRD = 0xFC; //PD0 and PD1 are uart
+  PORTD = powerUp;
     
   //init the UART -- uart_init() is in uart.c
   usart_init ( MYUBRR );
