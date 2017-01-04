@@ -195,87 +195,93 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
     int X = std::round(X0);
     int Y = std::round(Y0);
 
-    qDebug() << "Line Horizontal XY " << X0 << Y0 << Z0 << X1 << Y1 << Z1;
+    qDebug() << "Line XYZ " << X0 << Y0 << Z0 << X1 << Y1 << Z1;
 
-    if (Z0 == Z1)
+    int Xend = std::round(X1);
+    int Yend = std::round(Y1);
+    int Zend = std::round(Z1);
+    int Xprobe[7], Yprobe[7], Zprobe[7]; //have to test 7 (octree minus 1) points distance to line, point by point
+
+    int dx, dy, dz;
+    (X1 > X0) ? dx = 1 : dx = - 1;
+    (Y1 > Y0) ? dy = 1 : dy = - 1;
+    (Z1 > Z0) ? dz = 1 : dz = - 1;
+
+    if (X1 == X0) dx = 0;
+    if (Y1 == Y0) dy = 0;
+    if (Z1 == Z0) dz = 0;
+
+    while (!((X == Xend) && (Y == Yend) && (Z == Zend)))
     {
-        int Xend = std::round(X1);
-        int Yend = std::round(Y1);
-        int Xprobe[3], Yprobe[3]; //have to test 3 points distance to line, point by point
+        double dist, numerator, denominator, Xtmp = 0, Ytmp = 0, Ztmp = 0;
+        double olddist = 10000;
 
-        int dx, dy;
-        (X1 > X0) ? dx = 1 : dx = - 1;
-        (Y1 > Y0) ? dy = 1 : dy = - 1;
+        Xprobe[0] = X + dx;
+        Yprobe[0] = Y;
+        Zprobe[0] = Z;
 
-        if (X1 == X0) dx = 0;
-        if (Y1 == Y0) dy = 0;
+        Xprobe[1] = X;
+        Yprobe[1] = Y + dy;
+        Zprobe[1] = Z;
 
-        while (!((X == Xend) && (Y == Yend)))
+        Xprobe[2] = X;
+        Yprobe[2] = Y;
+        Zprobe[2] = Z + dz;
+
+        Xprobe[3] = X + dx;
+        Yprobe[3] = Y + dy;
+        Zprobe[3] = Z;
+
+        Xprobe[4] = X + dx;
+        Yprobe[4] = Y;
+        Zprobe[4] = Z + dz;
+
+        Xprobe[5] = X;
+        Yprobe[5] = Y + dy;
+        Zprobe[5] = Z + dz;
+
+        Xprobe[6] = X + dx;
+        Yprobe[6] = Y + dy;
+        Zprobe[6] = Z + dz;
+
+        for (int i = 0; i < 7; i++)
         {
-
-            double dist, numerator, denominator, Xtmp = 0, Ytmp = 0;
-            double olddist = 10000;
-            for (int i = 0; i < 3; i++)
+            if (((Xprobe[i] - X) != 0) || ((Yprobe[i] - Y) != 0) || ((Zprobe[i] - Z) != 0))  //avoid step = 0
             {
-                Xprobe[0] = X + dx;
-                if (dx == 0) //avoid step = 0
-                {
-                    Yprobe[0] = Y + dy;
-                }
-                else
-                {
-                    Yprobe[0] = Y;
-                }
-                if (dy == 0)
-                {
-                    Xprobe[1] = X + dx;
-                }
-                else
-                {
-                    Xprobe[1] = X;
-                }
-                Yprobe[1] = Y + dy;
-                Xprobe[2] = X + dx;
-                Yprobe[2] = Y + dy;
+                double X01 = X1 - X0;
+                double Y01 = Y1 - Y0;
+                double Z01 = Z1 - Z0;
 
-                numerator = std::abs((Y1 - Y0) * Xprobe[i] - (X1 - X0) * Yprobe[i] + X1 * Y0 - Y1 * X0);
-                denominator = std::sqrt(std::pow((Y1 - Y0), 2) + std::pow((X1 - X0), 2));
+                double Xpb = X0 - Xprobe[i];
+                double Ypb = Y0 - Yprobe[i];
+                double Zpb = Z0 - Zprobe[i];
+
+                numerator = std::abs(std::sqrt(std::pow((Y01 * Zpb - Z01 * Ypb), 2) + std::pow((X01 * Zpb - Z01 * Xpb), 2) + std::pow((X01 * Ypb - Y01 * Xpb), 2)));
+                denominator = std::sqrt(std::pow(X01, 2) + std::pow(Y01, 2) + std::pow(Z01, 2));
                 dist = numerator / denominator;
-
-                //qDebug() << X << Y << "dist" << dist;
-                if (dist < olddist)
-                {
-                    olddist = dist;
-                    Xtmp = Xprobe[i];
-                    Ytmp = Yprobe[i];
-                }
+                    if (dist < olddist)
+                    {
+                        olddist = dist;
+                        Xtmp = Xprobe[i];
+                        Ytmp = Yprobe[i];
+                        Ztmp = Zprobe[i];
+                    }
             }
-            X = Xtmp;
-            Y = Ytmp;
-
-            if (dist >= 2) //? for more testing
-            {
-                qDebug() << "Something went wrong. Distance is: " << dist;
-                break;
-            }
-            //here output point, what about endpoints?
-            exportData(X, Y, Z);
         }
-    }
-    if ((X0 == X1) || (Y0 == Y1))
-    {
-        int dz;
-        int Zend = std::round(Z1);
+        X = Xtmp;
+        Y = Ytmp;
+        Z = Ztmp;
 
-        qDebug() << "Vertical " << Z0 << Z1;
-        (Z1 > Z0) ? dz = 1 : dz = - 1;
-        while (Z != Zend)
+        if (dist >= 2) //? for more testing
         {
-            Z = Z + dz;
-            //here output point
-            exportData(X, Y, Z);
+            qDebug() << "Something went wrong. Distance is: " << dist;
+            break;
         }
+        //here output point, what about endpoints?
+        exportData(X, Y, Z);
     }
+
+
 }
 void Decoder::renderCircleXY(double X0, double Y0, double Z0,
                              double X1, double Y1,
