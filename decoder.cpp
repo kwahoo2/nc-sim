@@ -197,9 +197,9 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
 
     qDebug() << "Line XYZ " << X0 << Y0 << Z0 << X1 << Y1 << Z1;
 
-    int Xend = std::round(X1);
-    int Yend = std::round(Y1);
-    int Zend = std::round(Z1);
+    int Xend = static_cast <int>(std::round(X1));
+    int Yend = static_cast <int>(std::round(Y1));
+    int Zend = static_cast <int>(std::round(Z1));
     int Xprobe[7], Yprobe[7], Zprobe[7]; //have to test 7 (octree minus 1) points distance to line, point by point
 
     int dx, dy, dz;
@@ -278,6 +278,7 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
             break;
         }
         //here output point, what about endpoints?
+        //qDebug() << X << Y << Z;
         exportData(X, Y, Z);
     }
 
