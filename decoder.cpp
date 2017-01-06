@@ -211,8 +211,10 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
     if (Y1 == Y0) dy = 0;
     if (Z1 == Z0) dz = 0;
 
+    double globaldist = 10000;
     while (!((X == Xend) && (Y == Yend) && (Z == Zend)))
     {
+        qDebug() << Y << Yend << "globaldist:" << globaldist;
         double dist, numerator, denominator, Xtmp = 0, Ytmp = 0, Ztmp = 0;
         double olddist = 10000;
 
@@ -271,15 +273,12 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
         X = Xtmp;
         Y = Ytmp;
         Z = Ztmp;
-
-        if (dist >= 2) //? for more testing
-        {
-            qDebug() << "Something went wrong. Distance is: " << dist;
-            break;
-        }
         //here output point, what about endpoints?
-        //qDebug() << X << Y << Z;
+        qDebug() << X << Y << Z;
         exportData(X, Y, Z);
+
+        globaldist = std::sqrt(std::pow((X - Xend), 2) + std::pow((Y - Yend), 2) + std::pow((Z - Zend), 2));
+        if (globaldist <= 1) break; //workarounf for precision errors
     }
 
 
@@ -309,6 +308,7 @@ void Decoder::renderCircleXY(double X0, double Y0, double Z0,
 
     if ((X == Xend) && (Y == Yend)) fullCircle = true;
 
+    double globaldist = 10000;
     while (!((X == Xend) && (Y == Yend) && (!fullCircle)))
     {
         if (ccw)
@@ -385,6 +385,9 @@ void Decoder::renderCircleXY(double X0, double Y0, double Z0,
 
         //here output point
         exportData(X, Y, Z0);
+
+        globaldist = std::sqrt(std::pow((X - Xend), 2) + std::pow((Y - Yend), 2));
+        if (globaldist <= 1) break; //workarounf for precision errors
     }
 }
 
