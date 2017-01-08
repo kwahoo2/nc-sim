@@ -429,21 +429,36 @@ void Decoder::exportData(int X, int Y, int Z)
         int Zstep = (posValNum.at(posValNum.size() - 1) - posValNum.at(posValNum.size() - 4));
         //qDebug() << Xstep << " " << Ystep << " " << Zstep;
 
-        if (Xstep > 1 || Ystep > 1 || Zstep > 1) qDebug() << "Warning, Step" << Xstep << Ystep << Zstep;
         if (reversedX) Xstep=-Xstep;
         if (reversedY) Ystep=-Ystep;
         if (reversedZ) Zstep=-Zstep;
 
-        if (Xstep > 0) byte |= 0b00000001;
-        if (Ystep > 0) byte |= 0b00000010;
-        if (Zstep > 0) byte |= 0b00000100;
+        if (Xstep >= 1) byte |= 0b00000001;
+        if (Ystep >= 1) byte |= 0b00000010;
+        if (Zstep >= 1) byte |= 0b00000100;
 
-        if (Xstep < 0) byte |= 0b00001000;
-        if (Ystep < 0) byte |= 0b00010000;
-        if (Zstep < 0) byte |= 0b00100000;
+        if (Xstep <= -1) byte |= 0b00001000;
+        if (Ystep <= -1) byte |= 0b00010000;
+        if (Zstep <= -1) byte |= 0b00100000;
 
         steps.append(byte);
-        //qDebug() << X << Y << Z << byte;
+
+        if (std::abs(Xstep) > 1 || std::abs(Ystep) > 1 || std::abs(Zstep) > 1) //for double steps
+        {
+            byte = 0;
+            qDebug() << "Warning, Step" << Xstep << Ystep << Zstep;
+            if (Xstep == 2) byte |= 0b00000001;
+            if (Ystep == 2) byte |= 0b00000010;
+            if (Zstep == 2) byte |= 0b00000100;
+
+            if (Xstep == -2) byte |= 0b00001000;
+            if (Ystep == -2) byte |= 0b00010000;
+            if (Zstep == -2) byte |= 0b00100000;
+            steps.append(byte);
+        }
+
+
+        qDebug() << X << Y << Z << byte;
     }
 }
 
