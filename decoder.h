@@ -30,6 +30,7 @@ private:
     void decodeMovement(const int num,
                         const std::vector <QChar> args, const std::vector <double> vals);
     double Xold, Yold, Zold;
+
     int stepsPerMM;
     int byteCounter;
     int recCounter; //counter for received/finished byte, should be smaller than send bytes

@@ -3,7 +3,7 @@
 
 Decoder::Decoder(QObject *parent) : QObject(parent)
 {
-    Xold = 0.0;
+    Xold = 0.0; //double milimeters
     Yold = 0.0;
     Zold = 0.0;
     reversedX = false,
@@ -214,7 +214,7 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
     double globaldist = 10000;
     while (!((X == Xend) && (Y == Yend) && (Z == Zend)))
     {
-        qDebug() << Y << Yend << "globaldist:" << globaldist;
+        //qDebug() << Y << Yend << "globaldist:" << globaldist;
         double dist, numerator, denominator, Xtmp = 0, Ytmp = 0, Ztmp = 0;
         double olddist = 10000;
 
@@ -274,11 +274,10 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
         Y = Ytmp;
         Z = Ztmp;
         //here output point, what about endpoints?
-        qDebug() << X << Y << Z;
         exportData(X, Y, Z);
 
         globaldist = std::sqrt(std::pow((X - Xend), 2) + std::pow((Y - Yend), 2) + std::pow((Z - Zend), 2));
-        if (globaldist <= 1) break; //workarounf for precision errors
+        if (globaldist <= 1) break; //workaround for precision errors
     }
 
 
@@ -300,6 +299,7 @@ void Decoder::renderCircleXY(double X0, double Y0, double Z0,
     qDebug() << "Circle XY " << X0 << Y0 << X1 << Y1 << CX << CY << R << ccw;
     int X = std::round(X0);
     int Y = std::round(Y0);
+    int Z = std::round(Z0);
     int Xend = std::round(X1);
     int Yend = std::round(Y1);
     int Xprobe[3], Yprobe[3]; //have to test 3 points distance to circle, point by point
@@ -384,10 +384,10 @@ void Decoder::renderCircleXY(double X0, double Y0, double Z0,
         fullCircle = false;
 
         //here output point
-        exportData(X, Y, Z0);
+        exportData(X, Y, Z);
 
         globaldist = std::sqrt(std::pow((X - Xend), 2) + std::pow((Y - Yend), 2));
-        if (globaldist <= 1) break; //workarounf for precision errors
+        if (globaldist <= 1) break; //workaround for precision errors
     }
 }
 
@@ -396,7 +396,6 @@ void Decoder::rapidMode()
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup
     int timerVal = round(invSpeedconst / rapidSpeed);
     byte = byte | static_cast<quint8>(timerVal);
-    qDebug() << "tim";
     steps.append(byte);
     byte = 0b10100001; //0b101 reserved for powersetup, 01 to keep motor power down
     steps.append(byte);
@@ -406,7 +405,6 @@ void Decoder::feedMode()
 {
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup,
     int timerVal = round(invSpeedconst / feedSpeed);
-    qDebug() << "tim";
     byte = byte | static_cast<quint8>(timerVal);
     steps.append(byte);
     byte = 0b10100000; //0b101 reserved for powersetup, 00 steppers and motor up
@@ -420,6 +418,7 @@ void Decoder::exportData(int X, int Y, int Z)
     posValNum.push_back(Y);
     posValNum.push_back(Z);
 
+
     if (posValNum.size() > 3)
     {
         quint8 byte = 0;
@@ -430,6 +429,7 @@ void Decoder::exportData(int X, int Y, int Z)
         int Zstep = (posValNum.at(posValNum.size() - 1) - posValNum.at(posValNum.size() - 4));
         //qDebug() << Xstep << " " << Ystep << " " << Zstep;
 
+        if (Xstep > 1 || Ystep > 1 || Zstep > 1) qDebug() << "Warning, Step" << Xstep << Ystep << Zstep;
         if (reversedX) Xstep=-Xstep;
         if (reversedY) Ystep=-Ystep;
         if (reversedZ) Zstep=-Zstep;
@@ -443,7 +443,7 @@ void Decoder::exportData(int X, int Y, int Z)
         if (Zstep < 0) byte |= 0b00100000;
 
         steps.append(byte);
-        //qDebug() << byte;
+        //qDebug() << X << Y << Z << byte;
     }
 }
 

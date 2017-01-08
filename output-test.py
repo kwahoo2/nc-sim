@@ -8,7 +8,7 @@ with open("steps.dat", "rb") as f:
     while byte:
         step = ord(byte)
         #print(str(step))
-        if (step & 0b10000000) == 0:
+        if ((step & 0b10000000) == 0):
             if step & 0b00000001:
                 x +=1
             if step & 0b00001000:
