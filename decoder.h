@@ -47,7 +47,7 @@ private:
     void writePosFile();
     void writeStepsFile();
     void getBytes();
-    void exportData(double X, double Y, double Z);
+    void exportData(int X, int Y, int Z);
     void rapidMode();
     void feedMode();
     bool useIJ, useIK, useJK;

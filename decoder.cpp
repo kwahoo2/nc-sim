@@ -396,6 +396,7 @@ void Decoder::rapidMode()
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup
     int timerVal = round(invSpeedconst / rapidSpeed);
     byte = byte | static_cast<quint8>(timerVal);
+    qDebug() << "tim";
     steps.append(byte);
     byte = 0b10100001; //0b101 reserved for powersetup, 01 to keep motor power down
     steps.append(byte);
@@ -405,13 +406,14 @@ void Decoder::feedMode()
 {
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup,
     int timerVal = round(invSpeedconst / feedSpeed);
+    qDebug() << "tim";
     byte = byte | static_cast<quint8>(timerVal);
     steps.append(byte);
     byte = 0b10100000; //0b101 reserved for powersetup, 00 steppers and motor up
     steps.append(byte);
 }
 
-void Decoder::exportData(double X, double Y, double Z)
+void Decoder::exportData(int X, int Y, int Z)
 {
     posValues << X << " " << Y << " " << Z <<"\n";
     posValNum.push_back(X);
