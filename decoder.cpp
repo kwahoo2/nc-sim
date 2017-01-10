@@ -522,4 +522,11 @@ void Decoder::resetBuffs()
     steps.clear();
     byteCounter = 0;
     recCounter = 0;
+
+}
+void Decoder::resetXYZ()
+{
+    Xold = 0.0;
+    Yold = 0.0;
+    Zold = 0.0;
 }

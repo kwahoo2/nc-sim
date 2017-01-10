@@ -24,6 +24,7 @@ signals:
 public slots:
     void decodeCommands(const QStringList lines);
     void resetBuffs();
+    void resetXYZ();
     void incrRecCounter(const int val);
 
 private:

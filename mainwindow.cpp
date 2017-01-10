@@ -31,11 +31,15 @@ void MainWindow::on_readTextButton_clicked()
                          mySerDrv, SLOT(sendByte(quint8)));
     }
 
+    myDecoder->resetBuffs();
+    if (ui->relativeChb->isChecked()) myDecoder->resetXYZ(); //run relative position to the previous run
+
     QString plainTextEditContents = ui->plainTextEdit->toPlainText();
     plainTextEditContents = plainTextEditContents.simplified(); //clear qstring from non-necessary whitespaces
     QStringList lines = plainTextEditContents.split("\n");
-    myDecoder->resetBuffs();
+
     emit toDecode(lines);
+
     mySerDrv->openSerial();
     QObject::connect(mySerDrv, SIGNAL(getRecLen(int)),
                      myDecoder, SLOT(incrRecCounter(const int)));
@@ -43,49 +47,6 @@ void MainWindow::on_readTextButton_clicked()
     QObject::connect(myDecoder, SIGNAL(sendSingleByte(quint8)),
                      mySerDrv, SLOT(sendByte(quint8)));
     myDecoder->incrRecCounter(0); //initial batch
-
-}
-
-void MainWindow::on_xPButton_pressed()
-{
-    if (!mySerDrv->isOpened()) mySerDrv->openSerial();
-    //qDebug() << "X+ " << endl;
-    for(int i=0; i<10; i++) mySerDrv->sendByte(0b00000001);
-}
-
-void MainWindow::on_xMButton_pressed()
-{
-    if (!mySerDrv->isOpened()) mySerDrv->openSerial();
-    //qDebug() << "X- " << endl;
-    for(int i=0; i<10; i++) mySerDrv->sendByte(0b00001000);
-}
-
-void MainWindow::on_yPButton_pressed()
-{
-    if (!mySerDrv->isOpened()) mySerDrv->openSerial();
-    //qDebug() << "Y+ " << endl;
-    for(int i=0; i<10; i++) mySerDrv->sendByte(0b00000010);
-}
-
-void MainWindow::on_yMButton_pressed()
-{
-    if (!mySerDrv->isOpened()) mySerDrv->openSerial();
-    //qDebug() << "Y- " << endl;
-    for(int i=0; i<10; i++) mySerDrv->sendByte(0b00010000);
-}
-
-void MainWindow::on_zPButton_pressed()
-{
-    if (!mySerDrv->isOpened()) mySerDrv->openSerial();
-    //qDebug() << "Z+ " << endl;
-    for(int i=0; i<10; i++) mySerDrv->sendByte(0b00000100);
-}
-
-void MainWindow::on_zMButton_pressed()
-{
-    if (!mySerDrv->isOpened()) mySerDrv->openSerial();
-    //qDebug() << "Z- " << endl;
-    for(int i=0; i<10; i++) mySerDrv->sendByte(0b00100000);
 }
 
 void MainWindow::on_reversedXChb_toggled(bool checked)
