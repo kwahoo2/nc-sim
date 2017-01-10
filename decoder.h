@@ -51,6 +51,7 @@ private:
     void exportData(int X, int Y, int Z);
     void rapidMode();
     void feedMode();
+    void powerDown();
     bool useIJ, useIK, useJK;
     double invSpeedconst, rapidSpeed, feedSpeed;
 };

@@ -132,9 +132,6 @@ void decodeStep(uint8_t step)
     PORTB = steps[iX];
     PORTC = steps[iY];
     PORTD = (steps[iZ] << 2) | powerUp;
-    //PORTD = (steps[iZ] << 2);
-    
-    //_delay_ms(10);
 }
 
 void decodeCommand(uint8_t command)
@@ -149,6 +146,7 @@ void decodeCommand(uint8_t command)
     {
 
         powerUp = (command & 0b00000011) << 6; //port 6 and 7
+        PORTD = (steps[iZ] << 2) | powerUp;
     }
 }
 

@@ -32,6 +32,8 @@ void Decoder::decodeCommands(const QStringList lines)
     for (int i = 0; i < lines.count(); i++)
     {
         QString currentLine = lines[i];
+        if (currentLine.isEmpty()) break;
+
         QChar fc = currentLine.at(0); //if the first char in a new line is not G, copy old Gxx and send further
         if (fc != QLatin1Char('G'))
         {
@@ -89,6 +91,7 @@ void Decoder::decodeCommands(const QStringList lines)
 
         }
     }
+
     if (number != -1) //read the last line
     {
         decodeMovement(number,
@@ -96,6 +99,8 @@ void Decoder::decodeCommands(const QStringList lines)
     }
     writePosFile(); //write positions (int) to file
     writeStepsFile();
+    powerDown();
+
 }
 void Decoder::decodeMovement(const int num,
                     const std::vector <QChar> args, const std::vector <double> vals)
@@ -398,6 +403,12 @@ void Decoder::rapidMode()
     byte = byte | static_cast<quint8>(timerVal);
     steps.append(byte);
     byte = 0b10100001; //0b101 reserved for powersetup, 01 to keep motor power down
+    steps.append(byte);
+}
+
+void Decoder::powerDown()
+{
+    quint8 byte = 0b10100011; //0b101 reserved for powersetup, 11 to keep motor and stepper power down
     steps.append(byte);
 }
 
