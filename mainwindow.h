@@ -20,6 +20,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+public slots:
+    void updateValLabel(const double X, const double Y, const double Z);
+
 private slots:
     void on_readTextButton_clicked();
 

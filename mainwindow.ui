@@ -63,21 +63,42 @@ G00 X0 Y0 F5</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="0" column="2">
+       <widget class="QLabel" name="labelX">
+        <property name="text">
+         <string>X: 0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="labelY">
+        <property name="text">
+         <string>Y: 0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLabel" name="labelZ">
+        <property name="text">
+         <string>Z: 0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
        <widget class="QCheckBox" name="reversedZChb">
         <property name="text">
          <string>Reverse Z</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QCheckBox" name="relativeChb">
-        <property name="text">
-         <string>Relative to previous run</string>
-        </property>
-       </widget>
-      </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QCheckBox" name="relativeChb">
+      <property name="text">
+       <string>Relative to previous run</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

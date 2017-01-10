@@ -6,6 +6,10 @@ Decoder::Decoder(QObject *parent) : QObject(parent)
     Xold = 0.0; //double milimeters
     Yold = 0.0;
     Zold = 0.0;
+
+    Xrec = 0.0; //values received back from serial
+    Yrec = 0.0;
+    Zrec = 0.0;
     reversedX = false,
     reversedY = false,
     reversedZ = false;
@@ -14,7 +18,7 @@ Decoder::Decoder(QObject *parent) : QObject(parent)
     useIJ = 1; //important for G02 and G03 commands, driven by G17, G18 and G19
     useIK = 0;
     useJK = 0;
-    stepsPerMM = 96;
+    stepsPerMM = 96.0;
     invSpeedconst = 3.2; //magic number used to calculate timers
     rapidSpeed = 3.2; //mm/s
     feedSpeed = 0.32;
@@ -45,13 +49,11 @@ void Decoder::decodeCommands(const QStringList lines)
                 args.clear();
             }
         }
-        //qDebug() << currentLine;
 
         QStringList cmds = currentLine.split(" ");
         for (int j = 0; j < cmds.count(); j++)
         {
             QString currentCmd = cmds[j];
-            //qDebug() << currentCmd;
             QChar c = currentCmd.at(0);
 
             if (c == QLatin1Char('G'))
@@ -71,7 +73,6 @@ void Decoder::decodeCommands(const QStringList lines)
                     partial += currentCmd.at(s);
                 }
                 number = partial.toInt();
-                //qDebug() << number;
                 cmd = c;
             }
             else if(c == QLatin1Char('X') || c == QLatin1Char('Y') || c == QLatin1Char('Z')
@@ -84,7 +85,6 @@ void Decoder::decodeCommands(const QStringList lines)
                     partial += currentCmd.at(s);
                 }
                 double value = partial.toDouble();
-                //qDebug() << value;
                 vals.push_back(value);
                 args.push_back(c);
             }
@@ -105,12 +105,6 @@ void Decoder::decodeCommands(const QStringList lines)
 void Decoder::decodeMovement(const int num,
                     const std::vector <QChar> args, const std::vector <double> vals)
 {
-    /*qDebug() << cmd << num;
-    for (uint i = 0; i < args.size(); i++)
-    {
-        qDebug() << args.at(i) << vals.at(i);
-    }*/
-
     if (num == 17) {useIJ = 1; useIK = 0; useJK = 0;}
     if (num == 18) {useIJ = 0; useIK = 1; useJK = 0;}
     if (num == 19) {useIJ = 0; useIK = 0; useJK = 1;}
@@ -151,7 +145,6 @@ void Decoder::decodeMovement(const int num,
         double I = 0.0;
         double J = 0.0;
         double F = 0.0;
-        //double K = 0.0;
         double CX, CY;
         bool ccw = 0;
 
@@ -219,7 +212,6 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
     double globaldist = 10000;
     while (!((X == Xend) && (Y == Yend) && (Z == Zend)))
     {
-        //qDebug() << Y << Yend << "globaldist:" << globaldist;
         double dist, numerator, denominator, Xtmp = 0, Ytmp = 0, Ztmp = 0;
         double olddist = 10000;
 
@@ -251,6 +243,7 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
         Yprobe[6] = Y + dy;
         Zprobe[6] = Z + dz;
 
+        exportData(X, Y, Z); //export startpoint
         for (int i = 0; i < 7; i++)
         {
             if (((Xprobe[i] - X) != 0) || ((Yprobe[i] - Y) != 0) || ((Zprobe[i] - Z) != 0))  //avoid step = 0
@@ -284,8 +277,6 @@ void Decoder::renderLine(double X0, double Y0, double Z0,
         globaldist = std::sqrt(std::pow((X - Xend), 2) + std::pow((Y - Yend), 2) + std::pow((Z - Zend), 2));
         if (globaldist <= 1) break; //workaround for precision errors
     }
-
-
 }
 void Decoder::renderCircleXY(double X0, double Y0, double Z0,
                              double X1, double Y1,
@@ -311,6 +302,7 @@ void Decoder::renderCircleXY(double X0, double Y0, double Z0,
     bool fullCircle = false;
     int dx = 0, dy = 0;
 
+    exportData(X, Y, Z); //export startpoint
     if ((X == Xend) && (Y == Yend)) fullCircle = true;
 
     double globaldist = 10000;
@@ -433,12 +425,10 @@ void Decoder::exportData(int X, int Y, int Z)
     if (posValNum.size() > 3)
     {
         quint8 byte = 0;
-        // TODO
 
         int Xstep = (posValNum.at(posValNum.size() - 3) - posValNum.at(posValNum.size() - 6));
         int Ystep = (posValNum.at(posValNum.size() - 2) - posValNum.at(posValNum.size() - 5));
         int Zstep = (posValNum.at(posValNum.size() - 1) - posValNum.at(posValNum.size() - 4));
-        //qDebug() << Xstep << " " << Ystep << " " << Zstep;
 
         if (reversedX) Xstep=-Xstep;
         if (reversedY) Ystep=-Ystep;
@@ -467,9 +457,6 @@ void Decoder::exportData(int X, int Y, int Z)
             if (Zstep == -2) byte |= 0b00100000;
             steps.append(byte);
         }
-
-
-        qDebug() << X << Y << Z << byte;
     }
 }
 
@@ -510,7 +497,6 @@ void Decoder::getBytes()
 void Decoder::incrRecCounter(int val)
 {
     recCounter = recCounter + val;
-    //qDebug() << recCounter;
     getBytes();
 }
 
@@ -524,9 +510,40 @@ void Decoder::resetBuffs()
     recCounter = 0;
 
 }
+
 void Decoder::resetXYZ()
 {
     Xold = 0.0;
     Yold = 0.0;
     Zold = 0.0;
+
+    Xrec = 0.0;
+    Yrec = 0.0;
+    Zrec = 0.0;
+}
+
+void Decoder::decodeRecPos(const QByteArray recPos)
+{
+    double Xds = 1 / stepsPerMM;
+    double Yds = 1 / stepsPerMM;
+    double Zds = 1 / stepsPerMM;
+
+    if (reversedX) Xds=-Xds;
+    if (reversedY) Yds=-Yds;
+    if (reversedZ) Zds=-Zds;
+
+    for (int i = 0; i < recPos.length(); i++)
+    {
+        quint8 step =  recPos.at(i);
+        if (!(step & 0b10000000)) //ignore commands
+        {
+            if (step & 0b00000001) Xrec += Xds;
+            if (step & 0b00001000) Xrec -= Xds;
+            if (step & 0b00000010) Yrec += Yds;
+            if (step & 0b00010000) Yrec -= Yds;
+            if (step & 0b00000100) Zrec += Zds;
+            if (step & 0b00100000) Zrec -= Zds;
+        }
+    }
+    emit currentPos(Xrec, Yrec, Zrec);
 }

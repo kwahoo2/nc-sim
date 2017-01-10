@@ -17,6 +17,7 @@ protected:
 
 signals:
     void getRecLen(const int recLen);
+    void recSerial(const QByteArray serB);
 
 private:
     QSerialPort *serial;
@@ -32,6 +33,7 @@ public slots:
     void closeSerial();
     void refreshPorts();
     void setPort(const int val);
+    void clearSer();
 };
 
 #endif // SERIALDRIVER_H

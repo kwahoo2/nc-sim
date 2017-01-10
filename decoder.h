@@ -20,19 +20,22 @@ public:
 
 signals:
     void sendSingleByte(const quint8 byte);
+    void currentPos(const double X, const double Y, const double Z);
 
 public slots:
     void decodeCommands(const QStringList lines);
     void resetBuffs();
     void resetXYZ();
     void incrRecCounter(const int val);
+    void decodeRecPos(const QByteArray recP);
 
 private:
     void decodeMovement(const int num,
                         const std::vector <QChar> args, const std::vector <double> vals);
     double Xold, Yold, Zold;
+    double Xrec, Yrec, Zrec;
 
-    int stepsPerMM;
+    double stepsPerMM;
     int byteCounter;
     int recCounter; //counter for received/finished byte, should be smaller than send bytes
     QString posVals;

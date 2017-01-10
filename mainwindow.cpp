@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent) :
     mySerDrv = new SerialDriver(this);
     QObject::connect(this, SIGNAL(toDecode(QStringList)),
                      myDecoder, SLOT(decodeCommands(const QStringList)));
+    QObject::connect(myDecoder,SIGNAL(currentPos(double,double,double)),
+                     this, SLOT(updateValLabel(double,double,double)));
     ui->setupUi(this);
 
 }
@@ -25,10 +27,13 @@ void MainWindow::on_readTextButton_clicked()
     {
         mySerDrv->closeSerial();
         QObject::disconnect(mySerDrv, SIGNAL(getRecLen(int)),
-                         myDecoder, SLOT(incrRecCounter(const int)));
+                            myDecoder, SLOT(incrRecCounter(const int)));
 
         QObject::disconnect(myDecoder, SIGNAL(sendSingleByte(quint8)),
-                         mySerDrv, SLOT(sendByte(quint8)));
+                            mySerDrv, SLOT(sendByte(quint8)));
+
+        QObject::disconnect(mySerDrv, SIGNAL(recSerial(QByteArray)),
+                         myDecoder, SLOT(decodeRecPos(QByteArray)));
     }
 
     myDecoder->resetBuffs();
@@ -46,7 +51,19 @@ void MainWindow::on_readTextButton_clicked()
 
     QObject::connect(myDecoder, SIGNAL(sendSingleByte(quint8)),
                      mySerDrv, SLOT(sendByte(quint8)));
+
+    QObject::connect(mySerDrv, SIGNAL(recSerial(QByteArray)),
+                     myDecoder, SLOT(decodeRecPos(QByteArray)));
+
     myDecoder->incrRecCounter(0); //initial batch
+}
+
+void MainWindow::updateValLabel(const double X, const double Y, const double Z)
+{
+
+    ui->labelX->setText("X: "+QString::number(X, 'f', 2));
+    ui->labelY->setText("Y: "+QString::number(Y, 'f', 2));
+    ui->labelZ->setText("Z: "+QString::number(Z, 'f', 2));
 }
 
 void MainWindow::on_reversedXChb_toggled(bool checked)

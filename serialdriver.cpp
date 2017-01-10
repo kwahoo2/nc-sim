@@ -31,16 +31,22 @@ void SerialDriver::openSerial()
                      this, SLOT(readSerial()));
 }
 
+void SerialDriver::clearSer()
+{
+    serial->clear();
+    serialBuffer.clear();
+}
+
 void SerialDriver::sendByte(const quint8 val)
 {
     char str[] = {static_cast<char>(val)};
     serial->write(str, sizeof(str));
-    //QString binStr( QString::number(val, 2 ) );
-    //qDebug() << "Sended " << binStr;
 }
 
 void SerialDriver::closeSerial()
 {
+    QObject::disconnect(serial, SIGNAL(readyRead()),
+                     this, SLOT(readSerial()));
     serial->close();
 }
 
@@ -60,5 +66,6 @@ void SerialDriver::readSerial()
         serialBuffer = serial->readAll();
         int recLen = serialBuffer.length();
         emit getRecLen(recLen);
+        emit recSerial(serialBuffer);
 }
 
