@@ -32,6 +32,12 @@ private slots:
 
     void on_reversedZChb_toggled(bool checked);
 
+    void on_actionOpen_G_Code_triggered();
+
+    void on_actionSave_G_Code_as_triggered();
+
+    void on_actionSave_G_Code_triggered();
+
 signals:
     void toDecode(const QStringList lines);
 
@@ -39,6 +45,7 @@ private:
     Ui::MainWindow *ui;
     Decoder *myDecoder;
     SerialDriver *mySerDrv;
+    QString lastfilename;
 
 protected:
 };

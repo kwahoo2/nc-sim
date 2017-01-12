@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>NC Parser</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -26,7 +26,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QPlainTextEdit" name="plainTextEdit">
+     <widget class="QPlainTextEdit" name="gcodeTextEdit">
       <property name="plainText">
        <string>G00 Z0.5 F5
 G00 X2 Y3 F5
@@ -111,6 +111,29 @@ G00 X0 Y0 F5</string>
      <height>31</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpen_G_Code"/>
+    <addaction name="actionSave_G_Code_as"/>
+    <addaction name="actionSave_G_Code"/>
+   </widget>
+   <widget class="QMenu" name="menuOptions">
+    <property name="title">
+     <string>Opt&amp;ions</string>
+    </property>
+    <addaction name="actionPreferences"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>He&amp;lp</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuOptions"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -121,6 +144,34 @@ G00 X0 Y0 F5</string>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpen_G_Code">
+   <property name="text">
+    <string>&amp;Open G-Code</string>
+   </property>
+  </action>
+  <action name="actionSave_G_Code_as">
+   <property name="text">
+    <string>Save G-Code as...</string>
+   </property>
+  </action>
+  <action name="actionSave_G_Code">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Save G-Code</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="text">
+    <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

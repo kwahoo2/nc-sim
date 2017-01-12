@@ -1,5 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "QFileDialog"
+#include "QFile"
+#include "QTextStream"
+#include "QMessageBox"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -12,6 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(myDecoder,SIGNAL(currentPos(double,double,double)),
                      this, SLOT(updateValLabel(double,double,double)));
     ui->setupUi(this);
+
+    lastfilename = "";
 
 }
 
@@ -39,7 +46,7 @@ void MainWindow::on_readTextButton_clicked()
     myDecoder->resetBuffs();
     if (ui->relativeChb->isChecked()) myDecoder->resetXYZ(); //run relative position to the previous run
 
-    QString plainTextEditContents = ui->plainTextEdit->toPlainText();
+    QString plainTextEditContents = ui->gcodeTextEdit->toPlainText();
     plainTextEditContents = plainTextEditContents.simplified(); //clear qstring from non-necessary whitespaces
     QStringList lines = plainTextEditContents.split("\n");
 
@@ -79,4 +86,47 @@ void MainWindow::on_reversedYChb_toggled(bool checked)
 void MainWindow::on_reversedZChb_toggled(bool checked)
 {
     myDecoder->reversedZ = checked;
+}
+
+void MainWindow::on_actionOpen_G_Code_triggered()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open G-Code File"));
+    QFile file(QFileInfo(filename).absoluteFilePath());
+    if (!file.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+        return;
+    }
+    QTextStream in(&file);
+    ui->gcodeTextEdit->document()->setPlainText(in.readAll());
+    file.close();
+}
+
+void MainWindow::on_actionSave_G_Code_as_triggered()
+{
+    QString filename = QFileDialog::getSaveFileName(this, tr("Save G-Code File"));
+    lastfilename = filename;
+    QFile file(QFileInfo(filename).absoluteFilePath());
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+        return;
+    }
+    QTextStream out(&file);
+    out << ui->gcodeTextEdit->toPlainText();
+    file.close();
+    ui->actionSave_G_Code->setEnabled(true);
+}
+
+void MainWindow::on_actionSave_G_Code_triggered()
+{
+    QFile file(QFileInfo(lastfilename).absoluteFilePath());
+    if (!file.open(QIODevice::WriteOnly))
+    {
+        QMessageBox::information(this, tr("Unable to open file"), file.errorString());
+        return;
+    }
+    QTextStream out(&file);
+    out << ui->gcodeTextEdit->toPlainText();
+    file.close();
 }
