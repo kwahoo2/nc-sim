@@ -19,9 +19,9 @@ Decoder::Decoder(QObject *parent) : QObject(parent)
     useIK = 0;
     useJK = 0;
     stepsPerMM = 96.0;
-    invSpeedconst = 3.2; //magic number used to calculate timers
-    rapidSpeed = 3.2; //mm/s
-    feedSpeed = 0.32;
+    invSpeedconst = 3.2; //magic number used to calculate timers: f_cpu (16000000)/(stepsPerMM(96)*timerCTC(100)*preskaler(128)*bytemultipler(4))
+    rapidSpeed = 3.0; //mm/s
+    feedSpeed = 0.3;
 
     posValues.setString(&posVals);
 }
@@ -174,6 +174,8 @@ void Decoder::decodeMovement(const int num,
             R = std::sqrt((I * I) + (J * J));
             renderCircleXY(Xold, Yold, Zold, X, Y, CX, CY, R, ccw);
         }
+
+        if (useIK || useJK) qDebug() << "YZ and XZ plane circles are not implemented yet!";
 
         Xold = X; Yold = Y; Zold = Z;
     }

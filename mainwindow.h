@@ -7,6 +7,7 @@
 #include <QDebug>
 #include "decoder.h"
 #include "serialdriver.h"
+#include "prefsdialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -38,6 +39,8 @@ private slots:
 
     void on_actionSave_G_Code_triggered();
 
+    void on_actionPreferences_triggered();
+
 signals:
     void toDecode(const QStringList lines);
 
@@ -45,6 +48,7 @@ private:
     Ui::MainWindow *ui;
     Decoder *myDecoder;
     SerialDriver *mySerDrv;
+    PrefsDialog *myPrefsDial;
     QString lastfilename;
 
 protected:

@@ -12,13 +12,26 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     myDecoder = new Decoder(this);
     mySerDrv = new SerialDriver(this);
+    myPrefsDial = new PrefsDialog(this); //dialog with options
+    myPrefsDial->setModal(false);
     QObject::connect(this, SIGNAL(toDecode(QStringList)),
                      myDecoder, SLOT(decodeCommands(const QStringList)));
     QObject::connect(myDecoder,SIGNAL(currentPos(double,double,double)),
                      this, SLOT(updateValLabel(double,double,double)));
+    QObject::connect(myPrefsDial, SIGNAL(givePortSelection(QString)),
+                     mySerDrv, SLOT(setPort(QString)));
     ui->setupUi(this);
 
     lastfilename = "";
+
+    mySerDrv->refreshPorts();
+    for (QSerialPortInfo &port : mySerDrv->ports)
+    {
+        QString portname = port.systemLocation();
+        //qDebug() << port.portName();
+        qDebug() << port.systemLocation();
+        myPrefsDial->addPortName(portname);
+    }
 
 }
 
@@ -129,4 +142,9 @@ void MainWindow::on_actionSave_G_Code_triggered()
     QTextStream out(&file);
     out << ui->gcodeTextEdit->toPlainText();
     file.close();
+}
+
+void MainWindow::on_actionPreferences_triggered()
+{
+    myPrefsDial->show();
 }

@@ -10,10 +10,14 @@ void SerialDriver::refreshPorts()
     ports = QSerialPortInfo::availablePorts();
 }
 
-void SerialDriver::setPort(const int val)
+/*void SerialDriver::checkBuadRates()
 {
-    QString portName = ports[val].portName();
-    serial->setPortName("/dev/"+portName); //linux only!
+    QList baudrates = QSerialPortInfo::standardBaudRates();
+}*/
+
+void SerialDriver::setPort(const QString portsel)
+{
+    serial->setPortName(portsel);
     qDebug() << "Port set to " << serial->portName();
 }
 

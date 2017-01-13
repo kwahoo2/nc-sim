@@ -32,7 +32,7 @@ public slots:
     void openSerial();
     void closeSerial();
     void refreshPorts();
-    void setPort(const int val);
+    void setPort(const QString portsel);
     void clearSer();
 };
 

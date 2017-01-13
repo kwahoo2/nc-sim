@@ -15,12 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     decoder.cpp \
-    serialdriver.cpp
+    serialdriver.cpp \
+    prefsdialog.cpp
 
 HEADERS  += mainwindow.h \
     decoder.h \
-    serialdriver.h
+    serialdriver.h \
+    prefsdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    prefsdialog.ui
 
 CONFIG += c++11
