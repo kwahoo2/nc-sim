@@ -16,7 +16,6 @@ class Decoder : public QObject
     Q_OBJECT
 public:
     explicit Decoder(QObject *parent = 0);
-    bool reversedX, reversedY, reversedZ;
 
 signals:
     void sendSingleByte(const quint8 byte);
@@ -28,12 +27,20 @@ public slots:
     void resetXYZ();
     void incrRecCounter(const int val);
     void decodeRecPos(const QByteArray recP);
+    void setXrev(const bool val);
+    void setYrev(const bool val);
+    void setZrev(const bool val);
+    void setSteps(const double val);
+    void setDefFeedSpeed(const double val);
+    void setDefRapidSpeed(const double val);
+    void setInvSpeed(const double val);
 
 private:
     void decodeMovement(const int num,
                         const std::vector <QChar> args, const std::vector <double> vals);
     double Xold, Yold, Zold;
     double Xrec, Yrec, Zrec;
+    bool reversedX, reversedY, reversedZ;
 
     double stepsPerMM;
     int byteCounter;

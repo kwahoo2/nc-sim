@@ -46,6 +46,8 @@ private slots:
 
     void on_actionPreferences_triggered();
 
+    void on_relativeChb_toggled(bool checked);
+
 signals:
     void toDecode(const QStringList lines);
 

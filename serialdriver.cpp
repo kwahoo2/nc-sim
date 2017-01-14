@@ -75,7 +75,6 @@ SerialDriver::~SerialDriver()
     serial->close();
 }
 
-
 void SerialDriver::readSerial()
 {
         serialBuffer = serial->readAll();
@@ -83,4 +82,5 @@ void SerialDriver::readSerial()
         emit getRecLen(recLen);
         emit recSerial(serialBuffer);
 }
+
 

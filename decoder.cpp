@@ -393,7 +393,7 @@ void Decoder::renderCircleXY(double X0, double Y0, double Z0,
 void Decoder::rapidMode()
 {
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup
-    int timerVal = round(invSpeedconst / rapidSpeed);
+    int timerVal = ceil(invSpeedconst / rapidSpeed);
     byte = byte | static_cast<quint8>(timerVal);
     steps.append(byte);
     byte = 0b10100001; //0b101 reserved for powersetup, 01 to keep motor power down
@@ -409,7 +409,7 @@ void Decoder::powerDown()
 void Decoder::feedMode()
 {
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup,
-    int timerVal = round(invSpeedconst / feedSpeed);
+    int timerVal = ceil(invSpeedconst / feedSpeed);
     byte = byte | static_cast<quint8>(timerVal);
     steps.append(byte);
     byte = 0b10100000; //0b101 reserved for powersetup, 00 steppers and motor up
@@ -548,4 +548,39 @@ void Decoder::decodeRecPos(const QByteArray recPos)
         }
     }
     emit currentPos(Xrec, Yrec, Zrec);
+}
+
+void Decoder::setXrev(const bool val)
+{
+    reversedX = val;
+}
+
+void Decoder::setYrev(const bool val)
+{
+    reversedY = val;
+}
+
+void Decoder::setZrev(const bool val)
+{
+    reversedZ = val;
+}
+
+void Decoder::setSteps(const double val)
+{
+    stepsPerMM = val;
+}
+
+void Decoder::setDefFeedSpeed(const double val)
+{
+    feedSpeed = val;
+}
+
+void Decoder::setDefRapidSpeed(const double val)
+{
+    rapidSpeed = val;
+}
+
+void Decoder::setInvSpeed(const double val)
+{
+    invSpeedconst = val;
 }

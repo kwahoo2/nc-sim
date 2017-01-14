@@ -19,11 +19,37 @@ MainWindow::MainWindow(QWidget *parent) :
                      mySerDrv, SLOT(setPort(QString)));
     QObject::connect(mySerDrv, SIGNAL(askForSerial()),
                      this, SLOT(askForSerial()));
+
     ui->setupUi(this);
+
+    QObject::connect(myPrefsDial, SIGNAL(setXrev(bool)),
+                     this->ui->reversedXChb, SLOT(setChecked(bool)));
+    QObject::connect(myPrefsDial, SIGNAL(setXrev(bool)),
+                     myDecoder, SLOT(setXrev(bool)));
+    QObject::connect(myPrefsDial, SIGNAL(setYrev(bool)),
+                     this->ui->reversedYChb, SLOT(setChecked(bool)));
+    QObject::connect(myPrefsDial, SIGNAL(setYrev(bool)),
+                     myDecoder, SLOT(setYrev(bool)));
+    QObject::connect(myPrefsDial, SIGNAL(setZrev(bool)),
+                     this->ui->reversedZChb, SLOT(setChecked(bool)));
+    QObject::connect(myPrefsDial, SIGNAL(setZrev(bool)),
+                     myDecoder, SLOT(setZrev(bool)));
+    QObject::connect(myPrefsDial, SIGNAL(setRelMov(bool)),
+                     this->ui->relativeChb, SLOT(setChecked(bool)));
+
+    QObject::connect(myPrefsDial, SIGNAL(setSteps(double)),
+                     myDecoder, SLOT(setSteps(double)));
+    QObject::connect(myPrefsDial, SIGNAL(setDefFeedSpeed(double)),
+                     myDecoder, SLOT(setDefFeedSpeed(double)));
+    QObject::connect(myPrefsDial, SIGNAL(setDefRapidSpeed(double)),
+                     myDecoder, SLOT(setDefRapidSpeed(double)));
+    QObject::connect(myPrefsDial, SIGNAL(setInvSpeed(double)),
+                     myDecoder, SLOT(setInvSpeed(double)));
 
     lastfilename = "";
 
     mySerDrv->refreshPorts();
+    myPrefsDial->loadOtherSettings();
 }
 
 MainWindow::~MainWindow()
@@ -86,17 +112,20 @@ void MainWindow::updateValLabel(const double X, const double Y, const double Z)
 
 void MainWindow::on_reversedXChb_toggled(bool checked)
 {
-    myDecoder->reversedX = checked;
+    myDecoder->setXrev(checked);
+    myPrefsDial->storeXrev(checked);
 }
 
 void MainWindow::on_reversedYChb_toggled(bool checked)
 {
-    myDecoder->reversedY = checked;
+    myDecoder->setYrev(checked);
+    myPrefsDial->storeYrev(checked);
 }
 
 void MainWindow::on_reversedZChb_toggled(bool checked)
 {
-    myDecoder->reversedZ = checked;
+    myDecoder->setZrev(checked);
+    myPrefsDial->storeZrev(checked);
 }
 
 void MainWindow::on_actionOpen_G_Code_triggered()
@@ -151,4 +180,9 @@ void MainWindow::askForSerial()
 {
     QMessageBox::information(this, tr("Wait"), tr("Please connect a serial device"));
     mySerDrv->refreshPorts();
+}
+
+void MainWindow::on_relativeChb_toggled(bool checked)
+{
+    myPrefsDial->storeRelative(checked);
 }

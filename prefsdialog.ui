@@ -37,7 +37,7 @@
      </widget>
     </item>
     <item row="2" column="1">
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_3">
+     <widget class="QDoubleSpinBox" name="feedSpinBox">
       <property name="singleStep">
        <double>0.100000000000000</double>
       </property>
@@ -78,7 +78,7 @@
      <widget class="QComboBox" name="portsComboBox"/>
     </item>
     <item row="1" column="1">
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_2">
+     <widget class="QDoubleSpinBox" name="rapidSpinBox">
       <property name="value">
        <double>3.000000000000000</double>
       </property>
