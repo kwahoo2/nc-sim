@@ -16,6 +16,9 @@
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -151,7 +154,7 @@ G00 X0 Y0 F5</string>
   </action>
   <action name="actionSave_G_Code_as">
    <property name="text">
-    <string>Save G-Code as...</string>
+    <string>Save &amp;G-Code as...</string>
    </property>
   </action>
   <action name="actionSave_G_Code">
