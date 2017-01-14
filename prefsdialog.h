@@ -3,6 +3,8 @@
 
 #include <QDialog>
 #include <QDebug>
+#include <QSerialPortInfo>
+#include <QSettings>
 
 namespace Ui {
 class PrefsDialog;
@@ -17,7 +19,7 @@ public:
     ~PrefsDialog();
 
 public slots:
-    void addPortName(QString port);
+    void addPortsNames(const QList <QSerialPortInfo> ports);
 
 private slots:
     void on_portsComboBox_activated(const QString &arg1);
@@ -27,6 +29,9 @@ signals:
 
 private:
     Ui::PrefsDialog *ui;
+    QSettings settings;
+    QString storedport;
+    void loadPortSettings();
 };
 
 #endif // PREFSDIALOG_H

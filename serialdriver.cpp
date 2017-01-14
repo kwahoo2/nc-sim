@@ -3,27 +3,38 @@
 SerialDriver::SerialDriver(QObject *parent) : QObject(parent)
 {
     serial = new QSerialPort(this);
-    serial->setPortName("/dev/ttyUSB0");
+    savedport = "/dev/ttyUSB0";
 }
 void SerialDriver::refreshPorts()
 {
+    QList <QSerialPortInfo> ports;
     ports = QSerialPortInfo::availablePorts();
-}
+    if (ports.isEmpty())
+    {
+        emit askForSerial();
+    }
+    else
+    {
+        emit listPorts(ports);
+    }
 
-/*void SerialDriver::checkBuadRates()
-{
-    QList baudrates = QSerialPortInfo::standardBaudRates();
-}*/
+}
 
 void SerialDriver::setPort(const QString portsel)
 {
+    savedport = portsel;
     serial->setPortName(portsel);
     qDebug() << "Port set to " << serial->portName();
 }
 
+QString SerialDriver::getPort()
+{
+    return serial->portName();
+}
+
 void SerialDriver::openSerial()
 {
-
+    serial->setPortName(savedport);
     serial->setBaudRate(38400);
     serial->setParity(QSerialPort::NoParity);
     serial->setStopBits(QSerialPort::OneStop);

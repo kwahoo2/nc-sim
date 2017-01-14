@@ -4,6 +4,7 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QDebug>
+#include "QMessageBox"
 
 class SerialDriver : public QObject
 {
@@ -11,16 +12,19 @@ class SerialDriver : public QObject
 public:
     explicit SerialDriver(QObject *parent = 0);
     bool isOpened();
-    QList <QSerialPortInfo> ports;
+    QString getPort();
 
 protected:
 
 signals:
     void getRecLen(const int recLen);
     void recSerial(const QByteArray serB);
+    void listPorts(const QList <QSerialPortInfo> ports);
+    void askForSerial();
 
 private:
     QSerialPort *serial;
+    QString savedport;
     QByteArray serialBuffer;
     ~SerialDriver();
 
@@ -32,8 +36,8 @@ public slots:
     void openSerial();
     void closeSerial();
     void refreshPorts();
-    void setPort(const QString portsel);
     void clearSer();
+    void setPort(const QString portsel);
 };
 
 #endif // SERIALDRIVER_H

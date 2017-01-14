@@ -1,10 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "QFileDialog"
-#include "QFile"
-#include "QTextStream"
-#include "QMessageBox"
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -18,21 +13,17 @@ MainWindow::MainWindow(QWidget *parent) :
                      myDecoder, SLOT(decodeCommands(const QStringList)));
     QObject::connect(myDecoder,SIGNAL(currentPos(double,double,double)),
                      this, SLOT(updateValLabel(double,double,double)));
+    QObject::connect(mySerDrv, SIGNAL(listPorts(QList<QSerialPortInfo>)),
+                     myPrefsDial, SLOT(addPortsNames(QList<QSerialPortInfo>)));
     QObject::connect(myPrefsDial, SIGNAL(givePortSelection(QString)),
                      mySerDrv, SLOT(setPort(QString)));
+    QObject::connect(mySerDrv, SIGNAL(askForSerial()),
+                     this, SLOT(askForSerial()));
     ui->setupUi(this);
 
     lastfilename = "";
 
     mySerDrv->refreshPorts();
-    for (QSerialPortInfo &port : mySerDrv->ports)
-    {
-        QString portname = port.systemLocation();
-        //qDebug() << port.portName();
-        qDebug() << port.systemLocation();
-        myPrefsDial->addPortName(portname);
-    }
-
 }
 
 MainWindow::~MainWindow()
@@ -66,6 +57,13 @@ void MainWindow::on_readTextButton_clicked()
     emit toDecode(lines);
 
     mySerDrv->openSerial();
+
+    if (!(mySerDrv->isOpened()))
+    {
+        QMessageBox::information(this, tr("Error"), tr("Unable to open serial port ") +mySerDrv->getPort());
+        return;
+    }
+
     QObject::connect(mySerDrv, SIGNAL(getRecLen(int)),
                      myDecoder, SLOT(incrRecCounter(const int)));
 
@@ -147,4 +145,10 @@ void MainWindow::on_actionSave_G_Code_triggered()
 void MainWindow::on_actionPreferences_triggered()
 {
     myPrefsDial->show();
+}
+
+void MainWindow::askForSerial()
+{
+    QMessageBox::information(this, tr("Wait"), tr("Please connect a serial device"));
+    mySerDrv->refreshPorts();
 }

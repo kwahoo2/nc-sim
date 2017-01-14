@@ -5,6 +5,10 @@
 #include <QtGui>
 #include <QtCore>
 #include <QDebug>
+#include "QFileDialog"
+#include "QFile"
+#include "QTextStream"
+#include "QMessageBox"
 #include "decoder.h"
 #include "serialdriver.h"
 #include "prefsdialog.h"
@@ -23,6 +27,7 @@ public:
 
 public slots:
     void updateValLabel(const double X, const double Y, const double Z);
+    void askForSerial();
 
 private slots:
     void on_readTextButton_clicked();
