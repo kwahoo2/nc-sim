@@ -46,6 +46,8 @@ volatile uint8_t loopsTim = 16; //16 000 000/128/96/100/16 =>0.8mm/s (96 halfste
 volatile uint8_t timOvf = 0;
 
 volatile uint8_t powerUp = 0b11000000; //if 0b0_ motor enabled, 0b_0 stepper motors power enabled 
+volatile uint8_t waitForCmdData = 0; //wait for next byte after command byte 
+volatile uint8_t lastCommand = 0;
 
 void timerInit(void)
 {
@@ -73,7 +75,7 @@ ISR(USART_RX_vect)
     if (head >= BUFSIZE)
     {
         head = 0;
-        ovf = 1; //todo: message to pc
+        ovf = 1;
     }
 }
 
@@ -136,17 +138,28 @@ void decodeStep(uint8_t step)
 
 void decodeCommand(uint8_t command)
 {
-    if ((command & 0b11000000) == 0b11000000) //0b11 reserved for velocity setup
+    if (waitForCmdData == 1)
     {
-
-        loopsTim = ((command & 0b00111111) << 2) + 1; //values 1-253, higher is slower
+        if (lastCommand == 0b11000000)
+        {
+            loopsTim = command; //values 0-255, higher is slower
+        }
+        waitForCmdData = 0;
+        lastCommand = 0;
     }
-    
-    if ((command & 0b10100000) == 0b10100000) //reserved for power modes setup
+    else
     {
+        if (command == 0b11000000) //0b11 reserved for velocity setup
+        {   
+            waitForCmdData = 1; //value will be send in next byte
+            lastCommand = command;
+        }
+        if ((command & 0b10100000) == 0b10100000) //reserved for power modes setup
+        {
 
-        powerUp = (command & 0b00000011) << 6; //port 6 and 7
-        PORTD = (steps[iZ] << 2) | powerUp;
+            powerUp = (command & 0b00000011) << 6; //port 6 and 7
+            PORTD = (steps[iZ] << 2) | powerUp;
+        }
     }
 }
 
@@ -168,7 +181,7 @@ int main(void)
     while ((head > tail && ovf == 0) || (head < tail && ovf == 1))
     {
         uint8_t step = stepbuf[tail];
-        if (!(step & 0b10000000))
+        if ((!(step & 0b10000000)) && (!waitForCmdData))
         {
             if ((countTim >= loopsTim) || (timOvf == 1))
             {
@@ -183,6 +196,7 @@ int main(void)
         {
             decodeCommand(step);
             tail++;
+            step = 0b01111111; //const echo for commands
             usart_putchar(step);
         }
         

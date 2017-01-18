@@ -90,13 +90,13 @@
     <item row="4" column="1">
      <widget class="QDoubleSpinBox" name="invSpeedSpinBox">
       <property name="toolTip">
-       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#008000;&quot;&gt;f_cpu&lt;/span&gt;&lt;span style=&quot; color:#c0c0c0;&quot;/&gt;&lt;span style=&quot; color:#008000;&quot;&gt;(16000000)/(stepsPerMM(96)*timerCTC(100)*preskaler(128)*bytemultipler(4))&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#008000;&quot;&gt;f_cpu(16000000)/(stepsPerMM(96)*timerCTC(100)*preskaler(128))&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
       <property name="minimum">
        <double>0.100000000000000</double>
       </property>
       <property name="maximum">
-       <double>20.000000000000000</double>
+       <double>200.000000000000000</double>
       </property>
       <property name="value">
        <double>3.200000000000000</double>

@@ -1,4 +1,4 @@
-# Hey Emacs, this is a -*- makefile -*-
+# # Hey Emacs, this is a -*- makefile -*-
 #----------------------------------------------------------------------------
 # WinAVR Makefile Template written by Eric B. Weddington, Jörg Wunsch, et al.
 #

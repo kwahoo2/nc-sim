@@ -79,7 +79,12 @@ void SerialDriver::readSerial()
 {
         serialBuffer = serial->readAll();
         int recLen = serialBuffer.length();
-        emit getRecLen(recLen);
+        int echoed = 0;
+        for (int i = 0; i < recLen; i++)
+        {
+           if ((serialBuffer.at(i) & 0b01111111) == serialBuffer.at(i)) echoed++; //count only staring from 0b0
+        }
+        emit getRecLen(echoed);
         emit recSerial(serialBuffer);
 }
 

@@ -394,7 +394,8 @@ void Decoder::rapidMode()
 {
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup
     int timerVal = ceil(invSpeedconst / rapidSpeed);
-    byte = byte | static_cast<quint8>(timerVal);
+    steps.append(byte);
+    byte = static_cast<quint8>(timerVal);
     steps.append(byte);
     byte = 0b10100001; //0b101 reserved for powersetup, 01 to keep motor power down
     steps.append(byte);
@@ -409,8 +410,9 @@ void Decoder::powerDown()
 void Decoder::feedMode()
 {
     quint8 byte = 0b11000000;//0b11 reserved for velocity setup,
+    steps.append(byte);
     int timerVal = ceil(invSpeedconst / feedSpeed);
-    byte = byte | static_cast<quint8>(timerVal);
+    byte = static_cast<quint8>(timerVal);
     steps.append(byte);
     byte = 0b10100000; //0b101 reserved for powersetup, 00 steppers and motor up
     steps.append(byte);
@@ -537,7 +539,7 @@ void Decoder::decodeRecPos(const QByteArray recPos)
     for (int i = 0; i < recPos.length(); i++)
     {
         quint8 step =  recPos.at(i);
-        if (!(step & 0b10000000)) //ignore commands
+        if (!(step & 0b11000000)) //ignore commands
         {
             if (step & 0b00000001) Xrec += Xds;
             if (step & 0b00001000) Xrec -= Xds;
