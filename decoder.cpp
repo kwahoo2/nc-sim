@@ -446,7 +446,7 @@ void Decoder::exportData(int X, int Y, int Z)
         if (Ystep <= -1) byte |= 0b00010000;
         if (Zstep <= -1) byte |= 0b00100000;
 
-        steps.append(byte);
+        if (byte != 0) steps.append(byte);
 
         if (std::abs(Xstep) > 1 || std::abs(Ystep) > 1 || std::abs(Zstep) > 1) //for double steps
         {
@@ -459,7 +459,6 @@ void Decoder::exportData(int X, int Y, int Z)
             if (Xstep == -2) byte |= 0b00001000;
             if (Ystep == -2) byte |= 0b00010000;
             if (Zstep == -2) byte |= 0b00100000;
-            steps.append(byte);
         }
     }
 }

@@ -55,6 +55,7 @@ void SerialDriver::clearSer()
 void SerialDriver::sendByte(const quint8 val)
 {
     char str[] = {static_cast<char>(val)};
+    //qDebug() << "sended " << str;
     serial->write(str, sizeof(str));
 }
 
@@ -86,6 +87,7 @@ void SerialDriver::readSerial()
         }
         emit getRecLen(echoed);
         emit recSerial(serialBuffer);
+        //qDebug() << "received" << serialBuffer;
 }
 
 
