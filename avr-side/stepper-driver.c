@@ -154,7 +154,8 @@ void decodeCommand(uint8_t command)
             waitForCmdData = 1; //value will be send in next byte
             lastCommand = command;
         }
-        if ((command & 0b10100000) == 0b10100000) //reserved for power modes setup
+        //if ((command & 0b10100000) == 0b10100000) //reserved for power modes setup
+        if ((command & 0b11111100) == 0b10100000) //power modes setup, more explicit if condition
         {
 
             powerUp = (command & 0b00000011) << 6; //port 6 and 7
