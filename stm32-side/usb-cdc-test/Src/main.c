@@ -201,7 +201,8 @@ void decodeCommand(uint8_t command)
             waitForCmdData = 1; //value will be send in next byte
             lastCommand = command;
         }
-        if ((command & 0b10100000) == 0b10100000) //reserved for power modes setup
+        //if ((command & 0b10100000) == 0b10100000) //reserved for power modes setup
+        if ((command & 0b11111100) == 0b10100000) //power modes setup, more explicit if condition
         {
             if (command & 0b00000001)HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
             else HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
@@ -235,12 +236,7 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim1);      //start timer1 in interrupt mode.
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //DC motor and stepper high (disabled)
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
   /* USER CODE END 2 */
-
-  MX_USB_DEVICE_Init();
-
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -400,8 +396,10 @@ static void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_0|GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3 
-                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7 
-                          |GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_RESET);
+                          |GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6|GPIO_PIN_7, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8|GPIO_PIN_9, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5|GPIO_PIN_6, GPIO_PIN_RESET);
