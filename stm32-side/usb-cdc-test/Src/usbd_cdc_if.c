@@ -99,6 +99,11 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
+//declared in main.c
+extern uint8_t stepbuf[250];
+extern uint8_t head;
+extern uint8_t ovf;
+
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -264,10 +269,6 @@ static int8_t CDC_Receive_FS (uint8_t* Buf, uint32_t *Len)
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
 
-  //declared in main.c
-  extern uint8_t stepbuf[250];
-  extern uint8_t head;
-  extern uint8_t ovf;
 
   for (int i = 0; i < (*Len); i++)
   {
